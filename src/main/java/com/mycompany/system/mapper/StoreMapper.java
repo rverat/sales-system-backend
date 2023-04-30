@@ -5,7 +5,6 @@
 package com.mycompany.system.mapper;
 
 import com.mycompany.system.model.business.Store;
-import com.mycompany.system.model.business.StoreResponse;
 import com.mycompany.system.model.thirdparty.StoreDTO;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -16,8 +15,11 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring")
 public interface StoreMapper {
-    
+
+    Store StoreDTOToStore(StoreDTO storeDTO);
+
+    List<Store> storeDTOListToStoreList(List<StoreDTO> storeDTO);
+
     StoreDTO storeToStoreDTO(Store store);
-    StoreResponse storeDTOToStoreRs(StoreDTO storeDTO);
-    List<StoreResponse> storeDTOToStoreRs(List<StoreDTO> storeDTO);
+
 }

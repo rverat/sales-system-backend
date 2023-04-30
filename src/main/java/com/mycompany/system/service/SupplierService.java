@@ -5,18 +5,21 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Supplier;
-import com.mycompany.system.model.business.SupplierResponse;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
  * @author ro
  */
 public interface SupplierService {
-    
-    List<SupplierResponse> getAll();
+
+    List<Supplier> getAll();
+
     void save(Supplier supplier);
+
     void update(Supplier supplier);
+
     void delete(int supplierId);
-    
+
 }

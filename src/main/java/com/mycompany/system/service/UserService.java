@@ -4,18 +4,21 @@
  */
 package com.mycompany.system.service;
 
-import com.mycompany.system.model.business.User;
-import com.mycompany.system.model.business.UserResponse;
+import com.mycompany.system.model.business.UserSystem;
+import java.util.List;
 
 /**
  *
  * @author ro
  */
 public interface UserService {
-    
-    UserResponse login(User user);
-    void save(User user);
-    void update(User user);
+
+    List<UserSystem> getAll();
+
+    void save(UserSystem user);
+
+    void update(UserSystem user);
+
     void delete(int userId);
-    
+
 }

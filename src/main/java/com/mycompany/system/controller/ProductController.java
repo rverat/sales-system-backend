@@ -5,7 +5,6 @@
 package com.mycompany.system.controller;
 
 import com.mycompany.system.model.business.Product;
-import com.mycompany.system.model.business.ProductResponse;
 import com.mycompany.system.service.ProductService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,38 +25,38 @@ import org.springframework.web.bind.annotation.RestController;
  * @author ro
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
-    
-  @Autowired
+
+    @Autowired
     private ProductService service;
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
-            MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<ProductResponse>> getAll() {
-        
+        MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<Product>> getAll() {
+
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody Product product) {
-                
-	service.save(product);
+
+        service.save(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping
     public ResponseEntity<HttpStatus> update(@RequestBody Product product) {
-                
-	service.update(product);
+
+        service.update(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable int id) {
-        
+
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    
+
 }

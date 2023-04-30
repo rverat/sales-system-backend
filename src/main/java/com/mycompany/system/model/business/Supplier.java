@@ -24,20 +24,14 @@ import lombok.Setter;
 public class Supplier implements Serializable{
     
     private static final long serialVersionUID = 1L;
-    
-    @JsonProperty("supplierId")
-    private String supplierId;
-    
+
+    @JsonProperty("id")
+    private int id;
+
     @JsonProperty("name")
     private String name;
-    
-    @JsonProperty("ruc")
-    private String ruc;
-    
+
     @JsonProperty("phoneNumber")
     private String phoneNumber;
-    
-    @JsonProperty("description")
-    private String description;
     
 }

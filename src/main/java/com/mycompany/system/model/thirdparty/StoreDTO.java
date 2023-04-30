@@ -23,30 +23,18 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "store")
-public class StoreDTO implements Serializable{
-    
+public class StoreDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
-    @JsonProperty("storeId")
+
+    @JsonProperty("id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "storeId")
-    private int storeId;
-    
+    @Column(name = "id")
+    private int id;
+
     @JsonProperty("name")
     @Column(name = "name")
     private String name;
-    
-    @JsonProperty("address")
-    @Column(name = "address")
-    private String address;
-    
-    @JsonProperty("phoneNumber")
-    @Column(name = "phoneNumber")
-    private String phoneNumber;
-    
-    @JsonProperty("description")
-    @Column(name = "description")
-    private String description;
-    
+
 }

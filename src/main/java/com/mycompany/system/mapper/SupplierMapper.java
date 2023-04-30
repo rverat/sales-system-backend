@@ -5,7 +5,6 @@
 package com.mycompany.system.mapper;
 
 import com.mycompany.system.model.business.Supplier;
-import com.mycompany.system.model.business.SupplierResponse;
 import com.mycompany.system.model.thirdparty.SupplierDTO;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -16,8 +15,11 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring")
 public interface SupplierMapper {
-    
+
+    Supplier supplierDTOToSupplier(SupplierDTO supplierDTO);
+
+    List<Supplier> supplierDTOListToSupplierList(List<SupplierDTO> supplierDTO);
+
     SupplierDTO supplierToSupplierDTO(Supplier supplier);
-    SupplierResponse supplierDTOToSupplierRs(SupplierDTO supplierDTO);
-    List<SupplierResponse> supplierDTOToSupplierRs(List<SupplierDTO> supplierDTO);
+
 }

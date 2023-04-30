@@ -8,7 +8,6 @@ import com.mycompany.system.service.SupplierService;
 import com.mycompany.system.dao.SupplierDAO;
 import com.mycompany.system.mapper.SupplierMapper;
 import com.mycompany.system.model.business.Supplier;
-import com.mycompany.system.model.business.SupplierResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,17 +17,17 @@ import org.springframework.stereotype.Service;
  * @author ro
  */
 @Service
-public class SupplierServiceImpl implements SupplierService{
-    
+public class SupplierServiceImpl implements SupplierService {
+
     @Autowired
     private SupplierMapper mapper;
-    
+
     @Autowired
     private SupplierDAO dao;
 
     @Override
-    public List<SupplierResponse> getAll() {
-        return mapper.supplierDTOToSupplierRs(dao.findAll());
+    public List<Supplier> getAll() {
+        return mapper.supplierDTOListToSupplierList(dao.findAll());
     }
 
     @Override
@@ -45,5 +44,5 @@ public class SupplierServiceImpl implements SupplierService{
     public void delete(int supplierId) {
         dao.deleteById(supplierId);
     }
-    
+
 }

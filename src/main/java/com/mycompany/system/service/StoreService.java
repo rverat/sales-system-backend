@@ -5,7 +5,6 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Store;
-import com.mycompany.system.model.business.StoreResponse;
 import java.util.List;
 
 /**
@@ -13,10 +12,13 @@ import java.util.List;
  * @author ro
  */
 public interface StoreService {
-    
-    List<StoreResponse> getAll();
+
+    List<Store> getAll();
+
     void save(Store store);
+
     void update(Store store);
+
     void delete(int storeId);
-    
+
 }

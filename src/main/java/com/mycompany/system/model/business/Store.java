@@ -21,23 +21,14 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Store implements Serializable{
-    
+public class Store implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
-    @JsonProperty("storeId")
-    private int storeId;
-    
+
+    @JsonProperty("id")
+    private int id;
+
     @JsonProperty("name")
     private String name;
-    
-    @JsonProperty("address")
-    private String address;
-    
-    @JsonProperty("phoneNumber")
-    private String phoneNumber;
-    
-    @JsonProperty("description")
-    private String description;
-    
+
 }

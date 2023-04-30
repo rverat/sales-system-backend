@@ -8,7 +8,6 @@ import com.mycompany.system.service.StoreService;
 import com.mycompany.system.dao.StoreDAO;
 import com.mycompany.system.mapper.StoreMapper;
 import com.mycompany.system.model.business.Store;
-import com.mycompany.system.model.business.StoreResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,33 +17,32 @@ import org.springframework.stereotype.Service;
  * @author ro
  */
 @Service
-public class StoreServiceImpl implements StoreService{
-    
-    @Autowired
-    private StoreMapper mapper;
-    
-    @Autowired
-    private StoreDAO dao;
+public class StoreServiceImpl implements StoreService {
 
+    @Autowired
+    private StoreDAO storeDAO;
+
+    @Autowired
+    private StoreMapper storeMapper;
 
     @Override
-    public List<StoreResponse> getAll() {
-        return mapper.storeDTOToStoreRs(dao.findAll());
+    public List<Store> getAll() {
+        return storeMapper.storeDTOListToStoreList(storeDAO.findAll());
     }
 
     @Override
     public void save(Store store) {
-        dao.save(mapper.storeToStoreDTO(store));
+        storeDAO.save(storeMapper.storeToStoreDTO(store));
     }
 
     @Override
     public void update(Store store) {
-        dao.save(mapper.storeToStoreDTO(store));
+        storeDAO.save(storeMapper.storeToStoreDTO(store));
     }
 
     @Override
     public void delete(int storeId) {
-        dao.deleteById(storeId);
+        storeDAO.deleteById(storeId);
     }
-    
+
 }

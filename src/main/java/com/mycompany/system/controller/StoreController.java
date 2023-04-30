@@ -5,7 +5,6 @@
 package com.mycompany.system.controller;
 
 import com.mycompany.system.model.business.Store;
-import com.mycompany.system.model.business.StoreResponse;
 import com.mycompany.system.service.StoreService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class StoreController {
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<StoreResponse>> getAll() {
+    public ResponseEntity<List<Store>> getAll() {
         
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }

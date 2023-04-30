@@ -5,12 +5,9 @@
 package com.mycompany.system.service.impl;
 
 import com.mycompany.system.service.UserService;
-import com.mycompany.system.dao.UserDAO;
-import com.mycompany.system.mapper.UserMapper;
-import com.mycompany.system.model.business.User;
-import com.mycompany.system.model.business.UserResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.mycompany.system.model.business.UserSystem;
+import java.util.List;
 
 /**
  *
@@ -18,37 +15,26 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl implements UserService{
-    
-    @Autowired
-    private UserMapper mapper;
-    
-    @Autowired
-    private UserDAO dao;
 
     @Override
-    public UserResponse login(User user) {
-        
-        /*return mapper.userDTOToUserRs(
-               dao.findByUserAndPassword(
-                       user.getUserName(), user.getPassword()));*/
-        return null;
-        
-        
+    public List<UserSystem> getAll() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void save(User user) {
-        dao.save(mapper.userToUserDTO(user));
+    public void save(UserSystem user) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void update(User user) {
-        dao.save(mapper.userToUserDTO(user));
+    public void update(UserSystem user) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void delete(int userId) {
-        dao.deleteById(userId);
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    
     
 }

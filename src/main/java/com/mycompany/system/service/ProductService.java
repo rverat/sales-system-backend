@@ -5,18 +5,21 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Product;
-import com.mycompany.system.model.business.ProductResponse;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
  * @author ro
  */
 public interface ProductService {
-    
-    List<ProductResponse> getAll();
+
+    List<Product> getAll();
+
     void save(Product product);
+
     void update(Product product);
+
     void delete(int productId);
-    
+
 }

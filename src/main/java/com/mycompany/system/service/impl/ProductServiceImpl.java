@@ -8,7 +8,6 @@ import com.mycompany.system.service.ProductService;
 import com.mycompany.system.dao.ProductDAO;
 import com.mycompany.system.mapper.ProductMapper;
 import com.mycompany.system.model.business.Product;
-import com.mycompany.system.model.business.ProductResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +26,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDAO dao;
     
     @Override
-    public List<ProductResponse> getAll() {
-        return mapper.productDTOToProductRs(dao.findAll());
+    public List<Product> getAll() {
+        return mapper.productDTOListToProductList(dao.findAll());
     }
 
     @Override
@@ -44,6 +43,5 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(int productId) {
         dao.deleteById(productId);
-    }
-    
+    }    
 }
