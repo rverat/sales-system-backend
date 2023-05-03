@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -61,7 +65,7 @@ public class SaleDTO implements Serializable {
 
     @JsonProperty("price")
     @Column(name = "price")
-    private BigDecimal price;
+    private BigDecimal price = new BigDecimal("0.00");
 
     @JsonProperty("discount")
     @Column(name = "discount")
@@ -70,5 +74,9 @@ public class SaleDTO implements Serializable {
     @JsonProperty("total_price")
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
+    
+    //@JsonProperty("saleDetail")
+    //@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<SaleDetailDTO> saleDetail= new ArrayList<>();
 
 }

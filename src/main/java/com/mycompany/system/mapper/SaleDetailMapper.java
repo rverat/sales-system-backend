@@ -18,8 +18,10 @@ public interface SaleDetailMapper {
 
     SaleDetail saleDetailDTOToSaleDetail(SaleDetailDTO saleDetailDTO);
 
-    List<SaleDetail> saleDetailDTOListToSaleDetailList(List<SaleDetailDTO> saleDetailDTO);
+    List<SaleDetail> saleDetailDTOListToSaleDetailList(List<SaleDetailDTO> saleDetailDTOs);
 
     SaleDetailDTO saleDetailToSaleDetailDTO(SaleDetail saleDetail);
+    
+    List<SaleDetailDTO> saleDetailListToSaleDetailDTOList(List<SaleDetail> saleDetails);
 
 }

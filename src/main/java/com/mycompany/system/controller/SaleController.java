@@ -54,5 +54,16 @@ public class SaleController {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 }

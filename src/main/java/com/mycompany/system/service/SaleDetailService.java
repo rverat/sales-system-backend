@@ -17,6 +17,8 @@ public interface SaleDetailService {
     List<SaleDetail> getAll();
 
     void save(SaleDetail saleDetail);
+    
+    void saveAll(List<SaleDetail> saleDetails);
 
     void update(SaleDetail saleDetail);
 

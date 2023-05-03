@@ -42,12 +42,15 @@ public class Sale implements Serializable {
     private LocalDate date;
 
     @JsonProperty("price")
-    private BigDecimal price;
+    private BigDecimal price = new BigDecimal("0.00");
 
     @JsonProperty("discount")
     private BigDecimal discount = new BigDecimal("0.00");
 
     @JsonProperty("total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
+    
+    //@JsonProperty("saleDetail")
+    //private List<SaleDetail> saleDetail= new ArrayList<>();
 
 }

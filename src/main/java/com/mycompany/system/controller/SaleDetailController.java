@@ -42,6 +42,12 @@ public class SaleDetailController {
         service.save(saleDetail);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    
+    @PostMapping("/save-all")
+    public ResponseEntity<HttpStatus> createMany(@RequestBody List<SaleDetail> saleDetails) {
+        service.saveAll(saleDetails);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
     @PatchMapping
     public ResponseEntity<HttpStatus> update(@RequestBody SaleDetail saleDetail) {

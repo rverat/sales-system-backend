@@ -4,10 +4,13 @@
  */
 package com.mycompany.system.model.thirdparty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,7 +44,7 @@ public class SaleDetailDTO implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_sale")
     private SaleDTO sale;
-    
+
     @JsonProperty("product")
     @ManyToOne
     @JoinColumn(name = "id_product")
@@ -62,5 +65,5 @@ public class SaleDetailDTO implements Serializable {
     @JsonProperty("totalPrice")
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
-    
+
 }

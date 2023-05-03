@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @author ro
  */
 @Service
-public class SaleDetailMapperServiceImpl implements SaleDetailService {
+public class SaleDetailServiceImpl implements SaleDetailService {
 
     @Autowired
     private SaleDetailMapper mapper;
@@ -34,6 +34,12 @@ public class SaleDetailMapperServiceImpl implements SaleDetailService {
     public void save(SaleDetail saleDetail) {
         dao.save(mapper.saleDetailToSaleDetailDTO(saleDetail));
     }
+    
+    
+    @Override
+    public void saveAll(List<SaleDetail> saleDetails) {
+        dao.saveAll(mapper.saleDetailListToSaleDetailDTOList(saleDetails));
+    }
 
     @Override
     public void update(SaleDetail saleDetail) {
@@ -45,4 +51,5 @@ public class SaleDetailMapperServiceImpl implements SaleDetailService {
         dao.deleteById(saleDetailId);
     }
 
+   
 }
