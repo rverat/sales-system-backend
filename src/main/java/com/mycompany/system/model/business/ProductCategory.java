@@ -26,8 +26,8 @@ public class ProductCategory implements Serializable{
     
     private static final long serialVersionUID = 1L;
     
-    @JsonProperty("categoryId")
-    private int categoryId;
+    @JsonProperty("id")
+    private int id;
     
     @JsonProperty("name")
     private String name;

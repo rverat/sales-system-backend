@@ -28,11 +28,11 @@ public class StoreStock implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @JsonProperty("productId")
-    private int productId;
+    @JsonProperty("product")
+    private Product product;
 
-    @JsonProperty("storeId")
-    private int storeId;
+    @JsonProperty("store")
+    private Store store;
 
     @JsonProperty("quantity")
     private int quantity;

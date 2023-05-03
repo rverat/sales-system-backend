@@ -8,9 +8,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mycompany.system.dao.ProductEntryWarehouseDAO;
+import com.mycompany.system.dao.WarehouseStockDAO;
 import com.mycompany.system.mapper.ProductEntryWarehouseMapper;
+import com.mycompany.system.mapper.WarehouseStockMapper;
 import com.mycompany.system.model.business.ProductEntryWarehouse;
+import com.mycompany.system.model.thirdparty.ProductEntryWarehouseDTO;
 import com.mycompany.system.service.ProductEntryWarehouseService;
+import java.util.Optional;
 
 /**
  *
@@ -28,6 +32,16 @@ public class ProductEntryWarehouseServiceImpl implements ProductEntryWarehouseSe
     @Override
     public List<ProductEntryWarehouse> getAll() {
         return mapper.productEntryWarehouseDTOListToProductEntryWarehouseList(dao.findAll());
+    }
+    
+      @Override
+    public Optional<ProductEntryWarehouse> findById(int id) {
+        Optional<ProductEntryWarehouseDTO> optional = dao.findById(id);   
+        if(optional.isPresent()){
+            ProductEntryWarehouseDTO  entryWarehouseDTO = optional.get();          
+           return Optional.of(mapper.productEntryWarehouseDTOToProductEntryWarehouse(entryWarehouseDTO));       
+        }
+      return  Optional.empty();
     }
 
     @Override

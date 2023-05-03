@@ -23,16 +23,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "category")
+@Table(name = "product_category")
 public class ProductCategoryDTO implements Serializable{
     
     private static final long serialVersionUID = 1L;
     
-    @JsonProperty("categoryId")
+    @JsonProperty("id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "categoryid")
-    private int categoryId;
+    @Column(name = "id")
+    private int id;
     
     @JsonProperty("name")
     @Column(name = "name")

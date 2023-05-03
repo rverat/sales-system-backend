@@ -40,17 +40,20 @@ public class SaleDTO implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @JsonProperty("userId")
+    @JsonProperty("userSystem")
+    @ManyToOne
     @JoinColumn(name = "id_user")
-    private int userId;
+    private UserSystemDTO userSystem;
 
-    @JsonProperty("customerId")
+    @JsonProperty("customer")
+    @ManyToOne
     @JoinColumn(name = "id_customer")
-    private int customerId;
+    private CustomerDTO customer;
 
-    @JsonProperty("storeId")
+    @JsonProperty("store")
+    @ManyToOne
     @JoinColumn(name = "id_store")
-    private int storeId;
+    private StoreDTO store;
 
     @JsonProperty("date")
     @Column(name = "date")

@@ -26,23 +26,23 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "warehouse_stock")
-public class WarehouseStockDTO implements Serializable{
+public class WarehouseStockDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
-private static final long serialVersionUID = 1L;
+    @JsonProperty("id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
-@JsonProperty("id")
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-@Column(name = "id")
-private int id;
+    @JsonProperty("product")
+    @ManyToOne
+    @JoinColumn(name = "id_product")
+    private ProductDTO product;
 
-@JsonProperty("productId")
-@JoinColumn(name = "id_product")
-private int productId;
-
-@JsonProperty("quantity")
-@Column(name = "quantity")
-private int quantity;
+    @JsonProperty("quantity")
+    @Column(name = "quantity")
+    private int quantity;
 
 }

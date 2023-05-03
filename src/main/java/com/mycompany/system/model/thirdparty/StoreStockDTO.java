@@ -36,13 +36,15 @@ public class StoreStockDTO implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @JsonProperty("productId")
+    @JsonProperty("product")
+    @ManyToOne
     @JoinColumn(name = "id_product")
-    private int productId;
+    private ProductDTO product;
 
-    @JsonProperty("storeId")
+    @JsonProperty("store")
+    @ManyToOne
     @JoinColumn(name = "id_store")
-    private int storeId;
+    private StoreDTO store;
 
     @JsonProperty("quantity")
     @Column(name = "quantity")

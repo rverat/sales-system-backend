@@ -4,9 +4,13 @@
  */
 package com.mycompany.system.controller;
 
+import com.mycompany.system.model.business.Product;
 import com.mycompany.system.model.business.ProductEntryWarehouse;
+import com.mycompany.system.model.business.WarehouseStock;
 import com.mycompany.system.service.ProductEntryWarehouseService;
+import com.mycompany.system.service.WarehouseStockService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +35,9 @@ public class ProductEntryWarehouseController {
     @Autowired
     private ProductEntryWarehouseService service;
 
+    @Autowired
+    private WarehouseStockService WService;
+
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<ProductEntryWarehouse>> getAll() {
@@ -42,13 +49,22 @@ public class ProductEntryWarehouseController {
     public ResponseEntity<HttpStatus> create(@RequestBody ProductEntryWarehouse productEntryWarehouse) {
 
         service.save(productEntryWarehouse);
+        WService.save(builStock(productEntryWarehouse, 0));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping
     public ResponseEntity<HttpStatus> update(@RequestBody ProductEntryWarehouse productEntryWarehouse) {
 
-        service.update(productEntryWarehouse);
+        Optional<ProductEntryWarehouse> optional = service.findById(productEntryWarehouse.getId());
+
+        if (optional.isPresent()) {
+            service.update(productEntryWarehouse);
+            
+            ProductEntryWarehouse entryWarehouseFromDB = optional.get();
+            WService.update(builStock(productEntryWarehouse, entryWarehouseFromDB.getQuantity()));
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -57,6 +73,29 @@ public class ProductEntryWarehouseController {
 
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private WarehouseStock builStock(ProductEntryWarehouse productEntryWarehouse, int quantityFromDB) {
+
+        Product product = productEntryWarehouse.getProduct();
+        Optional<WarehouseStock> warehouseStockOpt = WService.findByProductId(product.getId());
+
+        if (!warehouseStockOpt.isPresent()) {
+            return WarehouseStock.builder()
+                    .id(0)
+                    .product(product)
+                    .quantity(productEntryWarehouse.getQuantity())
+                    .build();
+        }
+
+        WarehouseStock warehouseStock = warehouseStockOpt.get();
+        int newQuantity = warehouseStock.getQuantity() - quantityFromDB + productEntryWarehouse.getQuantity();
+
+        return WarehouseStock.builder()
+                .id(warehouseStock.getId())
+                .product(product)
+                .quantity(newQuantity)
+                .build();
     }
 
 }

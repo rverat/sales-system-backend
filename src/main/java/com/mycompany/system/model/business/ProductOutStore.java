@@ -5,8 +5,12 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mycompany.system.model.thirdparty.ProductDTO;
+import com.mycompany.system.model.thirdparty.StoreDTO;
 import java.io.Serializable;
 import java.time.LocalDate;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,18 +33,18 @@ public class ProductOutStore implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @JsonProperty("productId")
-    private int productId;
+    @JsonProperty("product")
+    private Product product;
 
-    @JsonProperty("storeId")
-    private int storeId;
+    @JsonProperty("store")
+    private Store store;
 
     @JsonProperty("quantity")
     private int quantity;
 
     @JsonProperty("date")
     private LocalDate date;
-
+    
     @JsonProperty("ticket_Cancelled")
     private boolean ticketCancelled;
 

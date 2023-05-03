@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import com.mycompany.system.dao.ProductOutStoreDAO;
 import com.mycompany.system.mapper.ProductOutStoreMapper;
 import com.mycompany.system.model.business.ProductOutStore;
+import com.mycompany.system.model.thirdparty.ProductOutStoreDTO;
 import com.mycompany.system.service.ProductOutStoreService;
+import java.util.Optional;
 
 /**
  *
@@ -29,6 +31,16 @@ public class ProductOutStoreServiceImpl implements ProductOutStoreService {
     public List<ProductOutStore> getAll() {
         return mapper.productOutStoreDTOListToProductOutStoreList(dao.findAll());
     }
+    
+     @Override
+    public Optional<ProductOutStore> findById(int id) {
+         Optional<ProductOutStoreDTO> optional = dao.findById(id);   
+        if(optional.isPresent()){
+            ProductOutStoreDTO  entryWarehouseDTO = optional.get();          
+           return Optional.of(mapper.productOutStoreDTOToProductOutStore(entryWarehouseDTO));       
+        }
+      return  Optional.empty();
+    }
 
     @Override
     public void save(ProductOutStore productOutStore) {
@@ -45,4 +57,5 @@ public class ProductOutStoreServiceImpl implements ProductOutStoreService {
         dao.deleteById(productOutStoreId);
     }
 
+   
 }

@@ -5,6 +5,7 @@
 package com.mycompany.system.dao;
 
 import com.mycompany.system.model.thirdparty.ProductEntryWarehouseDTO;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ProductEntryWarehouseDAO extends JpaRepository<ProductEntryWarehouseDTO, Integer>{
+    
+    public Optional<ProductEntryWarehouseDTO> findById(int id);
     
 }

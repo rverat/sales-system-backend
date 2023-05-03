@@ -30,8 +30,8 @@ public class Product implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("productCategoryId")
-    private int productCategoryId;
+    @JsonProperty("productCategory")
+    private ProductCategory productCategory;
 
     @JsonProperty("description")
     private String description;

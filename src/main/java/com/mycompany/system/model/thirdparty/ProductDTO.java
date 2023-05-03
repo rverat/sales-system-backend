@@ -5,6 +5,7 @@
 package com.mycompany.system.model.thirdparty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mycompany.system.model.business.ProductCategory;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -40,10 +41,11 @@ public class ProductDTO implements Serializable {
     @JsonProperty("name")
     @Column(name = "name")
     private String name;
-
-    @JsonProperty("productCategoryId")
-    @Column(name = "id_product_category")
-    private int productCategoryId;
+    
+    @JsonProperty("productCategory")
+    @ManyToOne
+    @JoinColumn(name = "id_product_category")
+    private ProductCategoryDTO productCategory;
 
     @JsonProperty("description")
     @Column(name = "description")
@@ -52,5 +54,6 @@ public class ProductDTO implements Serializable {
     @JsonProperty("price")
     @Column(name = "price")
     private BigDecimal price = new BigDecimal("0.00");
+    
 
 }

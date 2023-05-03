@@ -28,15 +28,15 @@ public class Sale implements Serializable {
 
     @JsonProperty("id")
     private int id;
-
-    @JsonProperty("userId")
-    private int userId;
-
-    @JsonProperty("customerId")
-    private int customerId;
-
-    @JsonProperty("storeId")
-    private int storeId;
+    
+    @JsonProperty("userSystem")
+    private UserSystem userSystem;
+    
+    @JsonProperty("customer")
+    private Customer customer;
+    
+    @JsonProperty("store")
+    private Store store;
 
     @JsonProperty("date")
     private LocalDate date;

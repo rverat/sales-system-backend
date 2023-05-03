@@ -40,17 +40,20 @@ public class ProductEntryWarehouseDTO implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @JsonProperty("idUser")
-    @Column(name = "id_user")
-    private int idUser;
+    @JsonProperty("userSystem")
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private UserSystemDTO userSystem;
 
-    @JsonProperty("idProduct")
-    @Column(name = "id_product")
-    private int idProduct;
+    @JsonProperty("product")
+    @ManyToOne
+    @JoinColumn(name = "id_product")
+    private ProductDTO product;
 
-    @JsonProperty("idSupplier")
-    @Column(name = "id_supplier")
-    private int idSupplier;
+    @JsonProperty("supplier")
+    @ManyToOne
+    @JoinColumn(name = "id_supplier")
+    private SupplierDTO supplier;
 
     @JsonProperty("quantity")
     @Column(name = "quantity")
@@ -75,6 +78,5 @@ public class ProductEntryWarehouseDTO implements Serializable {
     @JsonProperty("ticketCancelled")
     @Column(name = "ticket_cancelled")
     private boolean ticketCancelled = false;
-
 
 }

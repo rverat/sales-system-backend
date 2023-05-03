@@ -37,13 +37,15 @@ public class SaleDetailDTO implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @JsonProperty("idSale")
+    @JsonProperty("sale")
+    @ManyToOne
     @JoinColumn(name = "id_sale")
-    private int idSale;
-
-    @JsonProperty("idProduct")
+    private SaleDTO sale;
+    
+    @JsonProperty("product")
+    @ManyToOne
     @JoinColumn(name = "id_product")
-    private int idProduct;
+    private ProductDTO product;
 
     @JsonProperty("quantity")
     @Column(name = "quantity")
@@ -60,5 +62,5 @@ public class SaleDetailDTO implements Serializable {
     @JsonProperty("totalPrice")
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
-
+    
 }

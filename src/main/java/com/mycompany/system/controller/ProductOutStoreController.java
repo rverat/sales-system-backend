@@ -4,9 +4,17 @@
  */
 package com.mycompany.system.controller;
 
+import com.mycompany.system.model.business.Product;
+import com.mycompany.system.model.business.ProductEntryWarehouse;
 import com.mycompany.system.model.business.ProductOutStore;
+import com.mycompany.system.model.business.Store;
+import com.mycompany.system.model.business.StoreStock;
+import com.mycompany.system.model.business.WarehouseStock;
 import com.mycompany.system.service.ProductOutStoreService;
+import com.mycompany.system.service.StoreStockService;
+import com.mycompany.system.service.WarehouseStockService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +39,12 @@ public class ProductOutStoreController {
     @Autowired
     private ProductOutStoreService service;
 
+    @Autowired
+    private StoreStockService sService;
+
+    @Autowired
+    private WarehouseStockService wService;
+
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<ProductOutStore>> getAll() {
@@ -41,21 +55,124 @@ public class ProductOutStoreController {
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody ProductOutStore productOutStore) {
 
-        service.save(productOutStore);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Product product = productOutStore.getProduct();
+        Store store = productOutStore.getStore();
+
+        Optional<WarehouseStock> warehouseStockOpt = wService.findByProductId(productOutStore.getProduct().getId());
+        Optional<StoreStock> storeStock = sService.findByProductIdAndStoreId(product.getId(), store.getId());
+
+        if (existStockAvailable(warehouseStockOpt, productOutStore.getQuantity())) {
+
+            service.save(productOutStore);
+
+            sService.save(builStock(storeStock, 0, productOutStore));
+
+            Optional<ProductOutStore> productOutStoreOpt = service.findById(productOutStore.getId());
+
+            wService.update(builStockWWhenSave(warehouseStockOpt, productOutStoreOpt, productOutStore));
+
+            return new ResponseEntity<>(HttpStatus.CREATED);
+
+        }
+
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PatchMapping
     public ResponseEntity<HttpStatus> update(@RequestBody ProductOutStore productOutStore) {
 
-        service.update(productOutStore);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Product product = productOutStore.getProduct();
+        Store store = productOutStore.getStore();
+
+        Optional<WarehouseStock> warehouseStockOpt = wService.findByProductId(productOutStore.getProduct().getId());
+        Optional<StoreStock> storeStock = sService.findByProductIdAndStoreId(product.getId(), store.getId());
+
+        Optional<ProductOutStore> productOutStoreOpt = service.findById(productOutStore.getId());
+
+        if (productOutStoreOpt.isPresent()) {
+            if (existStockAvailable(warehouseStockOpt, productOutStore.getQuantity())) {
+
+                service.save(productOutStore);
+
+                sService.update(builStock(storeStock, productOutStoreOpt.get().getQuantity(), productOutStore));
+
+                wService.update(builStockWWhenSave(warehouseStockOpt, productOutStoreOpt, productOutStore));
+
+                return new ResponseEntity<>(HttpStatus.CREATED);
+
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable int id) {
-        
+
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private StoreStock builStock(Optional<StoreStock> storeStockOpt, int quantityFromDB, ProductOutStore productOutStore) {
+
+        if (!storeStockOpt.isPresent()) {
+            return StoreStock.builder()
+                    .id(0)
+                    .product(storeStockOpt.get().getProduct())
+                    .store(storeStockOpt.get().getStore())
+                    .quantity(productOutStore.getQuantity())
+                    .build();
+        }
+
+        StoreStock storeStock = storeStockOpt.get();
+
+        int newQuantity = storeStock.getQuantity() - quantityFromDB + productOutStore.getQuantity();
+
+        return StoreStock.builder()
+                .id(storeStock.getId())
+                .product(storeStock.getProduct())
+                .store(storeStock.getStore())
+                .quantity(newQuantity)
+                .build();
+    }
+
+    private WarehouseStock builStockWWhenSave(Optional<WarehouseStock> warehouseStockOpt, Optional<ProductOutStore> productOutStoreOpt, ProductOutStore productOutStore) {
+
+        Product product = productOutStore.getProduct();
+
+        //actializa stock en iventario
+        WarehouseStock warehouseStock = warehouseStockOpt.get();
+
+        int newQuantity;
+
+        if (productOutStoreOpt.isPresent()) {
+
+            newQuantity = warehouseStock.getQuantity() + productOutStoreOpt.get().getQuantity() - productOutStore.getQuantity();
+
+        } else {
+            newQuantity = warehouseStock.getQuantity() - productOutStore.getQuantity();
+        }
+
+        return WarehouseStock.builder()
+                .id(warehouseStock.getId())
+                .product(product)
+                .quantity(newQuantity)
+                .build();
+    }
+
+    private boolean existStockAvailable(Optional<WarehouseStock> warehouseStockOpt, int quantity) {
+
+        if (!warehouseStockOpt.isPresent()) {
+            // retorna error porque no se registro la entrada de dicho producto
+            return false;
+        }
+
+        if (warehouseStockOpt.get().getQuantity() <= quantity) {
+            // no se puede ejecutar la operacion de envio a tienda porque no hay producto en stock de alamcen
+            return false;
+        }
+
+        //ahora insertar o modificar envio a tienda y actualizar stock en almacen y tienda
+        return true;
+
     }
 }

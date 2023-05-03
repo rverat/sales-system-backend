@@ -21,18 +21,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WarehouseStock implements Serializable{
+public class WarehouseStock implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
-private static final long serialVersionUID = 1L;
+    @JsonProperty("id")
+    private int id;
 
-@JsonProperty("id")
-private int id;
+    @JsonProperty("product")
+    private Product product;
 
-@JsonProperty("productId")
-private int productId;
-
-@JsonProperty("quantity")
-private int quantity;
+    @JsonProperty("quantity")
+    private int quantity;
 
 }

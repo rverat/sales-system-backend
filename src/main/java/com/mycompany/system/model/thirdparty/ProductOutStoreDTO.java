@@ -38,14 +38,16 @@ public class ProductOutStoreDTO implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-
-    @JsonProperty("productId")
+    
+    @JsonProperty("product")
+    @ManyToOne
     @JoinColumn(name = "id_product")
-    private int productId;
-
-    @JsonProperty("storeId")
+    private ProductDTO product;
+    
+    @JsonProperty("store")
+    @ManyToOne
     @JoinColumn(name = "id_store")
-    private int storeId;
+    private StoreDTO store;
 
     @JsonProperty("quantity")
     @Column(name = "quantity")
@@ -54,7 +56,7 @@ public class ProductOutStoreDTO implements Serializable {
     @JsonProperty("date")
     @Column(name = "date")
     private LocalDate date;
-
+      
     @JsonProperty("ticket_Cancelled")
     @Column(name = "ticket_Cancelled")
     private boolean ticketCancelled;

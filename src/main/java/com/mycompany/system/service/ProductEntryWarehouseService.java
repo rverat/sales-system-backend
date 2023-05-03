@@ -6,6 +6,7 @@ package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.ProductEntryWarehouse;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -14,6 +15,8 @@ import java.util.List;
 public interface ProductEntryWarehouseService {
 
     List<ProductEntryWarehouse> getAll();
+    
+    Optional<ProductEntryWarehouse> findById(int id);
 
     void save(ProductEntryWarehouse entry);
 

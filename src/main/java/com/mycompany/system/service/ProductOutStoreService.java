@@ -5,6 +5,7 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.ProductOutStore;
+import com.mycompany.system.model.thirdparty.ProductOutStoreDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,8 @@ import java.util.Optional;
 public interface ProductOutStoreService {
 
     List<ProductOutStore> getAll();
+    
+    public Optional<ProductOutStore> findById(int id);
 
     void save(ProductOutStore out);
 
