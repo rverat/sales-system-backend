@@ -5,7 +5,6 @@
 package com.mycompany.system.controller;
 
 import com.mycompany.system.model.business.Product;
-import com.mycompany.system.model.business.ProductEntryWarehouse;
 import com.mycompany.system.model.business.ProductOutStore;
 import com.mycompany.system.model.business.Store;
 import com.mycompany.system.model.business.StoreStock;
@@ -40,10 +39,10 @@ public class ProductOutStoreController {
     private ProductOutStoreService service;
 
     @Autowired
-    private StoreStockService sService;
+    private StoreStockService storeStockService;
 
     @Autowired
-    private WarehouseStockService wService;
+    private WarehouseStockService warehouseStockService;
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -58,18 +57,18 @@ public class ProductOutStoreController {
         Product product = productOutStore.getProduct();
         Store store = productOutStore.getStore();
 
-        Optional<WarehouseStock> warehouseStockOpt = wService.findByProductId(productOutStore.getProduct().getId());
-        Optional<StoreStock> storeStock = sService.findByProductIdAndStoreId(product.getId(), store.getId());
+        Optional<WarehouseStock> warehouseStockOpt = warehouseStockService.findByProductId(productOutStore.getProduct().getId());
+        Optional<StoreStock> storeStock = storeStockService.findByProductIdAndStoreId(product.getId(), store.getId());
 
         if (existStockAvailable(warehouseStockOpt, productOutStore.getQuantity())) {
 
             service.save(productOutStore);
 
-            sService.save(builStock(storeStock, 0, productOutStore));
+            storeStockService.save(builStock(storeStock, 0, productOutStore));
 
             Optional<ProductOutStore> productOutStoreOpt = service.findById(productOutStore.getId());
 
-            wService.update(builStockWWhenSave(warehouseStockOpt, productOutStoreOpt, productOutStore));
+            warehouseStockService.update(builStockWWhenSave(warehouseStockOpt, productOutStoreOpt, productOutStore));
 
             return new ResponseEntity<>(HttpStatus.CREATED);
 
@@ -84,8 +83,8 @@ public class ProductOutStoreController {
         Product product = productOutStore.getProduct();
         Store store = productOutStore.getStore();
 
-        Optional<WarehouseStock> warehouseStockOpt = wService.findByProductId(productOutStore.getProduct().getId());
-        Optional<StoreStock> storeStock = sService.findByProductIdAndStoreId(product.getId(), store.getId());
+        Optional<WarehouseStock> warehouseStockOpt = warehouseStockService.findByProductId(productOutStore.getProduct().getId());
+        Optional<StoreStock> storeStock = storeStockService.findByProductIdAndStoreId(product.getId(), store.getId());
 
         Optional<ProductOutStore> productOutStoreOpt = service.findById(productOutStore.getId());
 
@@ -94,9 +93,9 @@ public class ProductOutStoreController {
 
                 service.save(productOutStore);
 
-                sService.update(builStock(storeStock, productOutStoreOpt.get().getQuantity(), productOutStore));
+                storeStockService.update(builStock(storeStock, productOutStoreOpt.get().getQuantity(), productOutStore));
 
-                wService.update(builStockWWhenSave(warehouseStockOpt, productOutStoreOpt, productOutStore));
+                warehouseStockService.update(builStockWWhenSave(warehouseStockOpt, productOutStoreOpt, productOutStore));
 
                 return new ResponseEntity<>(HttpStatus.CREATED);
 
@@ -115,10 +114,13 @@ public class ProductOutStoreController {
     private StoreStock builStock(Optional<StoreStock> storeStockOpt, int quantityFromDB, ProductOutStore productOutStore) {
 
         if (!storeStockOpt.isPresent()) {
+            
+            //StoreStock storeStock= storeStockOpt.get();
+            
             return StoreStock.builder()
                     .id(0)
-                    .product(storeStockOpt.get().getProduct())
-                    .store(storeStockOpt.get().getStore())
+                    .product(productOutStore.getProduct())
+                    .store(productOutStore.getStore())
                     .quantity(productOutStore.getQuantity())
                     .build();
         }

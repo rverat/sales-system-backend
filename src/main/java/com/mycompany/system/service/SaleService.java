@@ -6,7 +6,6 @@ package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Sale;
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -21,5 +20,7 @@ public interface SaleService {
     void update(Sale sale);
 
     void delete(int saleId);
+
+    public Sale saveAndReturnData(Sale sale);
 
 }

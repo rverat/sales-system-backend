@@ -8,7 +8,9 @@ import com.mycompany.system.service.ProductService;
 import com.mycompany.system.dao.ProductDAO;
 import com.mycompany.system.mapper.ProductMapper;
 import com.mycompany.system.model.business.Product;
+import com.mycompany.system.model.thirdparty.ProductDTO;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Optional<Product> findById(int id) {
+        
+       Optional<ProductDTO> optional = dao.findById(id);
+       
+       if(!optional.isPresent()){
+           return Optional.empty();
+       }
+        return Optional.of(mapper.productDTOToProduct(optional.get()));
+    }
+    
+    @Override
     public void save(Product product) {
         dao.save(mapper.productToProductDTO(product));
     }
@@ -44,4 +57,5 @@ public class ProductServiceImpl implements ProductService {
     public void delete(int productId) {
         dao.deleteById(productId);
     }    
+
 }

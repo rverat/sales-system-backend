@@ -5,12 +5,8 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mycompany.system.model.thirdparty.ProductDTO;
-import com.mycompany.system.model.thirdparty.StoreDTO;
 import java.io.Serializable;
 import java.time.LocalDate;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

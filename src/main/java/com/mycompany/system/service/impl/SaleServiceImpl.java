@@ -7,6 +7,7 @@ package com.mycompany.system.service.impl;
 import com.mycompany.system.dao.SaleDAO;
 import com.mycompany.system.mapper.SaleMapper;
 import com.mycompany.system.model.business.Sale;
+import com.mycompany.system.model.thirdparty.SaleDTO;
 import com.mycompany.system.service.SaleService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public void delete(int saleId) {
         saleDAO.deleteById(saleId);
+    }
+
+    @Override
+    public Sale saveAndReturnData(Sale sale) {
+        SaleDTO saleDTO = saleDAO.save(saleMapper.saleToSaleDTO(sale));
+        return saleMapper.saleDTOToSale(saleDTO);
     }
 
 }
