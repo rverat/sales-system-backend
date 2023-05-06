@@ -9,6 +9,7 @@ import com.mycompany.system.mapper.SaleMapper;
 import com.mycompany.system.model.business.Sale;
 import com.mycompany.system.model.thirdparty.SaleDTO;
 import com.mycompany.system.service.SaleService;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,9 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public Sale saveAndReturnData(Sale sale) {
+        
+        sale.setDate(LocalDate.now());
+        
         SaleDTO saleDTO = saleDAO.save(saleMapper.saleToSaleDTO(sale));
         return saleMapper.saleDTOToSale(saleDTO);
     }

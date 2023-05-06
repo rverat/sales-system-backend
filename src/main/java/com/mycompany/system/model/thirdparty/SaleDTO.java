@@ -65,7 +65,7 @@ public class SaleDTO implements Serializable {
     @Column(name = "discount")
     private BigDecimal discount = new BigDecimal("0.00");
 
-    @JsonProperty("total_price")
+    @JsonProperty("totalPrice")
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
     

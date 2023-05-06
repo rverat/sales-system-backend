@@ -7,6 +7,7 @@ package com.mycompany.system.controller;
 import com.mycompany.system.model.business.StoreStock;
 import com.mycompany.system.service.StoreStockService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -36,6 +38,23 @@ public class StoreStockController {
     public ResponseEntity<List<StoreStock>> getAll() {
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
+    
+     
+    @PostMapping("/stock")
+    public ResponseEntity<StoreStock> findByProductIdAndStoreId(
+            @RequestParam(name= "productId") int productId, @RequestParam(name= "storeId") int storeId){
+        
+        Optional<StoreStock> optional = service.findByProductIdAndStoreId(productId, storeId);
+        
+        if(optional.isPresent()){
+            return new ResponseEntity<>(optional.get(), HttpStatus.OK);
+        }
+        
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        
+        
+    }
+
 
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody StoreStock storeStock) {

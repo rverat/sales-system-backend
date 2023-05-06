@@ -47,7 +47,7 @@ public class Sale implements Serializable {
     @JsonProperty("discount")
     private BigDecimal discount = new BigDecimal("0.00");
 
-    @JsonProperty("total_price")
+    @JsonProperty("totalPrice")
     private BigDecimal totalPrice = new BigDecimal("0.00");
     
     //@JsonProperty("saleDetail")

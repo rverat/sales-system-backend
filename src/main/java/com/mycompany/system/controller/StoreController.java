@@ -37,7 +37,7 @@ public class StoreController {
         
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
-
+   
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody Store store) {
                 
