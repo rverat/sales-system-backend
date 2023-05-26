@@ -6,6 +6,7 @@ package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.SaleDetail;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -14,6 +15,8 @@ import java.util.List;
 public interface SaleDetailService {
 
     List<SaleDetail> getAll();
+
+    Optional<List<SaleDetail>> findBySaleId(int saleId);
 
     void save(SaleDetail saleDetail);
     

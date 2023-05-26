@@ -7,10 +7,13 @@ package com.mycompany.system.service.impl;
 import com.mycompany.system.dao.SaleDetailDAO;
 import com.mycompany.system.mapper.SaleDetailMapper;
 import com.mycompany.system.model.business.SaleDetail;
+import com.mycompany.system.model.thirdparty.SaleDetailDTO;
 import com.mycompany.system.service.SaleDetailService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -28,6 +31,16 @@ public class SaleDetailServiceImpl implements SaleDetailService {
     @Override
     public List<SaleDetail> getAll() {
         return mapper.saleDetailDTOListToSaleDetailList(dao.findAll());
+    }
+
+    @Override
+    public Optional<List<SaleDetail>> findBySaleId(int saleId) {
+        Optional<List<SaleDetailDTO>> optional= dao.findBySaleId(saleId);
+
+        if(optional.get().isEmpty()){
+            return Optional.empty();
+        }
+        return Optional.of(mapper.saleDetailDTOListToSaleDetailList(optional.get()));
     }
 
     @Override

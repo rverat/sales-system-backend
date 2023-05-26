@@ -58,17 +58,70 @@ public class SaleController {
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody List<SaleDetail> saleDetail) {
 
+        //si pasa esta validacion inserta la venta, el detalle de la venta y la actualizacion en stock de la tienda
         validateStockStore(saleDetail);
-        
-        //si pasa las validaciones anteriores inserta la venta y detalle y la actualizacion en stock
 
+        //inserta la venta y retorna la venta unsertada
         Sale saleSaved = service.saveAndReturnData(saleDetail.get(0).getSale());
 
         BigDecimal priceSale = new BigDecimal(BigInteger.ZERO);
-        BigDecimal discountSale = new BigDecimal(BigInteger.ZERO);
-        
+        BigDecimal discountProductSale = new BigDecimal(BigInteger.ZERO);
         BigDecimal descountAllProduct = new BigDecimal(BigInteger.ZERO);
-        
+
+        this.saveAndUpdateSalaDetails(saleDetail, saleSaved, priceSale, discountProductSale, descountAllProduct);
+
+        saleSaved.setDiscount(discountProductSale.add(descountAllProduct));
+        saleSaved.setPrice(priceSale);
+        saleSaved.setTotalPrice(saleSaved.getPrice().subtract(descountAllProduct).subtract(discountProductSale));
+
+        service.update(saleSaved);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    
+    @PatchMapping
+    public ResponseEntity<HttpStatus> update(@RequestBody List<SaleDetail> saleDetails) {
+
+        Sale sale = saleDetails.get(0).getSale();
+
+        //Optional<List<SaleDetail>> saleDetailsFromDB = saleDetailService.findBySaleId(sale.getId());
+
+        //si pasa esta validacion inserta la venta, el detalle de la venta y la actualizacion en stock de la tienda
+        //validateStockStoreWhenUpdateSale(saleDetails, saleDetailsFromDB);
+
+        BigDecimal priceSale = new BigDecimal(BigInteger.ZERO);
+        BigDecimal discountProductSale = new BigDecimal(BigInteger.ZERO);
+        BigDecimal descountAllProduct = new BigDecimal(BigInteger.ZERO);
+
+        this.saveAndUpdateSalaDetails(saleDetails, sale, priceSale, discountProductSale, descountAllProduct);
+
+        sale.setDiscount(discountProductSale.add(descountAllProduct));
+        sale.setPrice(priceSale);
+        sale.setTotalPrice(sale.getPrice().subtract(descountAllProduct).subtract(discountProductSale));
+
+        service.update(sale);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void validateStockStoreWhenUpdateSale(List<SaleDetail> saleDetails, Optional<List<SaleDetail>> saleDetailsFromDB) {
+
+        if(!saleDetailsFromDB.isPresent()) {
+
+        }
+
+
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable int id) {
+        service.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private void saveAndUpdateSalaDetails(List<SaleDetail> saleDetail, Sale saleSaved, BigDecimal priceSale, BigDecimal discountProductSale, BigDecimal descountAllProduct) {
 
         for (SaleDetail detail : saleDetail) {
 
@@ -93,15 +146,14 @@ public class SaleController {
             detail.setUnitPrice(optional.get().getPrice());
 
             BigDecimal discount = detail.getDiscount();
-            discount = (discount == null || discount ==  BigDecimal.ZERO) ? BigDecimal.ZERO : detail.getDiscount();
-            
+            discount = (discount == null || discount == BigDecimal.ZERO) ? BigDecimal.ZERO : detail.getDiscount();
+
             BigDecimal allPriceProduct = optional.get().getPrice().multiply(BigDecimal.valueOf(detail.getQuantity()));
 
             detail.setTotalPrice(allPriceProduct.subtract(discount));
-            
 
             //precios para la venta
-            discountSale = discountSale.add(discount);            
+            discountProductSale = discountProductSale.add(discount);
             priceSale = priceSale.add(allPriceProduct);
 
             saleDetailService.save(detail);
@@ -109,29 +161,7 @@ public class SaleController {
 
         }
 
-            
-        saleSaved.setDiscount(discountSale.add(descountAllProduct));        
-        saleSaved.setPrice(priceSale);        
-        saleSaved.setTotalPrice(saleSaved.getPrice().subtract(descountAllProduct).subtract(discountSale));
-
-        service.update(saleSaved);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
-    
-    @PatchMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody Sale sale) {
-        service.update(sale);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable int id) {
-        service.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     private void validateStockStore(List<SaleDetail> saleDetail) throws IllegalArgumentException {
         for (SaleDetail detail : saleDetail) {
             

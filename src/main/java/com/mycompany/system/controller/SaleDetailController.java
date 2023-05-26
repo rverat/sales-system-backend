@@ -6,19 +6,14 @@ package com.mycompany.system.controller;
 
 import com.mycompany.system.model.business.SaleDetail;
 import com.mycompany.system.service.SaleDetailService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -35,6 +30,19 @@ public class SaleDetailController {
         MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<SaleDetail>> getAll() {
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(path="/{saleId}", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<SaleDetail>> getSaleDetails(@PathVariable int saleId) {
+
+        Optional<List<SaleDetail>> saleDetails = service.findBySaleId(saleId);
+
+        if(!saleDetails.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+            return new ResponseEntity<>(saleDetails.get(), HttpStatus.OK);
+
     }
 
     @PostMapping
