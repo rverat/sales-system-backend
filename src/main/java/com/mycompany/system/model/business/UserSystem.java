@@ -6,11 +6,11 @@ package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -34,10 +34,19 @@ public class UserSystem implements Serializable {
     @JsonProperty("email")
     private String email;
 
+    @NotBlank
     @JsonProperty("userName")
     private String userName;
 
+    @NotBlank
     @JsonProperty("userPassword")
     private String userPassword;
+
+    @NotBlank
+    @JsonProperty("typeUser")
+    private String typeUser;
+
+    @JsonProperty("token")
+    private String token;
 
 }

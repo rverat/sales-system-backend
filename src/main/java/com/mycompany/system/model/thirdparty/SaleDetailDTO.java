@@ -62,4 +62,8 @@ public class SaleDetailDTO implements Serializable {
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
 
+    @JsonProperty("cancelSaleDetail")
+    @Column(name = "cancel_sale_detail")
+    private int cancelSaleDetail = 0;
+
 }

@@ -4,35 +4,28 @@
  */
 package com.mycompany.system.controller;
 
-import com.mycompany.system.model.business.Product;
-import com.mycompany.system.model.business.ProductOutStore;
-import com.mycompany.system.model.business.Store;
-import com.mycompany.system.model.business.StoreStock;
-import com.mycompany.system.model.business.WarehouseStock;
+import com.mycompany.system.model.business.*;
 import com.mycompany.system.service.ProductOutStoreService;
 import com.mycompany.system.service.StoreStockService;
 import com.mycompany.system.service.WarehouseStockService;
-import java.util.List;
-import java.util.Optional;
+import com.mycompany.system.util.JwtTokenUtil;
+import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 @RestController
-@RequestMapping("/product-out-store")
+@RequestMapping("/v1/product-out-store")
 public class ProductOutStoreController {
 
     @Autowired
@@ -45,14 +38,20 @@ public class ProductOutStoreController {
     private WarehouseStockService warehouseStockService;
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
-        MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<ProductOutStore>> getAll() {
+            MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<ProductOutStore>> getAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
 
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody ProductOutStore productOutStore) {
+    public ResponseEntity<HttpStatus> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ProductOutStore productOutStore) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
 
         Product product = productOutStore.getProduct();
         Store store = productOutStore.getStore();
@@ -78,7 +77,10 @@ public class ProductOutStoreController {
     }
 
     @PatchMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody ProductOutStore productOutStore) {
+    public ResponseEntity<HttpStatus> update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ProductOutStore productOutStore) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
 
         Product product = productOutStore.getProduct();
         Store store = productOutStore.getStore();
@@ -105,7 +107,10 @@ public class ProductOutStoreController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable int id) {
+    public ResponseEntity<HttpStatus> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
 
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -114,9 +119,9 @@ public class ProductOutStoreController {
     private StoreStock builStock(Optional<StoreStock> storeStockOpt, int quantityFromDB, ProductOutStore productOutStore) {
 
         if (!storeStockOpt.isPresent()) {
-            
+
             //StoreStock storeStock= storeStockOpt.get();
-            
+
             return StoreStock.builder()
                     .id(0)
                     .product(productOutStore.getProduct())
@@ -168,13 +173,10 @@ public class ProductOutStoreController {
             return false;
         }
 
-        if (warehouseStockOpt.get().getQuantity() <= quantity) {
-            // no se puede ejecutar la operacion de envio a tienda porque no hay producto en stock de alamcen
-            return false;
-        }
+        // no se puede ejecutar la operacion de envio a tienda porque no hay producto en stock de alamcen
+        return warehouseStockOpt.get().getQuantity() > quantity;
 
         //ahora insertar o modificar envio a tienda y actualizar stock en almacen y tienda
-        return true;
 
     }
 }

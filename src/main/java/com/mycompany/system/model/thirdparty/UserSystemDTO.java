@@ -49,4 +49,8 @@ public class UserSystemDTO implements Serializable {
     @Column(name = "user_password")
     private String userPassword;
 
+    @JsonProperty("typeUser")
+    @Column(name = "type_user")
+    private String typeUser;
+
 }

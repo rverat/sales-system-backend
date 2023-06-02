@@ -12,29 +12,27 @@ import com.mycompany.system.service.ProductService;
 import com.mycompany.system.service.SaleDetailService;
 import com.mycompany.system.service.SaleService;
 import com.mycompany.system.service.StoreStockService;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.List;
-import java.util.Optional;
+import com.mycompany.system.util.JwtTokenUtil;
+import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 @RestController
-@RequestMapping("/sale")
+@RequestMapping("/v1/sale")
 public class SaleController {
 
     @Autowired
@@ -50,13 +48,22 @@ public class SaleController {
     private ProductService productService;
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
-        MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<Sale>> getAll() {
+            MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<Sale>> getAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
+
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody List<SaleDetail> saleDetail) {
+    public ResponseEntity<HttpStatus> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody List<SaleDetail> saleDetail) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
+
+        Sale sale = saleDetail.get(0).getSale();
 
         //si pasa esta validacion inserta la venta, el detalle de la venta y la actualizacion en stock de la tienda
         validateStockStore(saleDetail);
@@ -66,66 +73,144 @@ public class SaleController {
 
         BigDecimal priceSale = new BigDecimal(BigInteger.ZERO);
         BigDecimal discountProductSale = new BigDecimal(BigInteger.ZERO);
-        BigDecimal descountAllProduct = new BigDecimal(BigInteger.ZERO);
 
-        this.saveAndUpdateSalaDetails(saleDetail, saleSaved, priceSale, discountProductSale, descountAllProduct);
+        this.saveAndUpdateSalaDetails(saleDetail, saleSaved, priceSale, discountProductSale);
 
-        saleSaved.setDiscount(discountProductSale.add(descountAllProduct));
+        saleSaved.setDiscount(discountProductSale.add(sale.getDiscount()));
         saleSaved.setPrice(priceSale);
-        saleSaved.setTotalPrice(saleSaved.getPrice().subtract(descountAllProduct).subtract(discountProductSale));
+        saleSaved.setTotalPrice(saleSaved.getPrice().subtract(saleSaved.getDiscount()));
 
         service.update(saleSaved);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    
+
     @PatchMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody List<SaleDetail> saleDetails) {
+    public ResponseEntity<HttpStatus> update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody List<SaleDetail> saleDetails) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
 
         Sale sale = saleDetails.get(0).getSale();
 
-        //Optional<List<SaleDetail>> saleDetailsFromDB = saleDetailService.findBySaleId(sale.getId());
+        Optional<List<SaleDetail>> saleDetailsFromDB = saleDetailService.findBySaleId(sale.getId());
 
-        //si pasa esta validacion inserta la venta, el detalle de la venta y la actualizacion en stock de la tienda
-        //validateStockStoreWhenUpdateSale(saleDetails, saleDetailsFromDB);
+        //validate ids for sale details
+
+        //end validate ids for sale details
+
+        //validate stock
+        for (SaleDetail newSaleDetail : saleDetails) {
+
+            if (newSaleDetail.getId() == 0) {
+                //call stock service
+                Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
+                if (!stockProduct.isPresent()) {
+                    //not product registry in stock
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+                if (newSaleDetail.getQuantity() > stockProduct.get().getQuantity()) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            } else if (newSaleDetail.getId() != 0) {
+
+                //if (newSaleDetail.getCancelSaleDetail() == 1) only return product to stock
+                if (newSaleDetail.getCancelSaleDetail() == 0){
+                    Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
+                    if (!stockProduct.isPresent()) {
+                        //not product registry in stock
+                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    }
+
+                    for (SaleDetail detailDB : saleDetailsFromDB.get()) {
+                        if (detailDB.getId() == newSaleDetail.getId()) {
+                            int quantityAll = stockProduct.get().getQuantity() + detailDB.getQuantity();
+                            if (newSaleDetail.getQuantity() > quantityAll) {
+                                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //end validate stock
+
+        //update sale detail and stock
+        for (SaleDetail newSaleDetail : saleDetails) {
+
+            if (newSaleDetail.getId() == 0) {
+                //call stock service
+                Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
+                if (!stockProduct.isPresent()) {
+                    //not product registry in stock
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+                if (newSaleDetail.getQuantity() > stockProduct.get().getQuantity()) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+
+                saleDetailService.save(newSaleDetail);
+                storeStockService.update(builStock(stockProduct, 0, newSaleDetail));
+
+
+            } else if (newSaleDetail.getId() != 0) {
+
+                //if (newSaleDetail.getCancelSaleDetail() == 1) only return product to stock
+                if (newSaleDetail.getCancelSaleDetail() == 0){
+                    Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
+                    if (!stockProduct.isPresent()) {
+                        //not product registry in stock
+                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    }
+
+                    for (SaleDetail detailDB : saleDetailsFromDB.get()) {
+                        if (detailDB.getId() == newSaleDetail.getId()) {
+                            int quantityAll = stockProduct.get().getQuantity() + detailDB.getQuantity();
+                            if (newSaleDetail.getQuantity() > quantityAll) {
+                                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                            }
+                            saleDetailService.update(newSaleDetail);
+                            storeStockService.update(builStock(stockProduct, detailDB.getQuantity(), newSaleDetail));
+                        }
+                    }
+                }
+            }
+        }
+        //end update sale detail and stock
 
         BigDecimal priceSale = new BigDecimal(BigInteger.ZERO);
         BigDecimal discountProductSale = new BigDecimal(BigInteger.ZERO);
-        BigDecimal descountAllProduct = new BigDecimal(BigInteger.ZERO);
 
-        this.saveAndUpdateSalaDetails(saleDetails, sale, priceSale, discountProductSale, descountAllProduct);
+        Optional<List<SaleDetail>> saleDetailsFromDBAfterUpdate = saleDetailService.findBySaleId(sale.getId());
 
-        sale.setDiscount(discountProductSale.add(descountAllProduct));
+        for (SaleDetail saleDetailAfter : saleDetailsFromDBAfterUpdate.get()){
+            priceSale.add(saleDetailAfter.getTotalPrice());
+            discountProductSale = discountProductSale.add(saleDetailAfter.getDiscount());
+        }
+
+        sale.setDiscount(discountProductSale.add(sale.getDiscount()));
         sale.setPrice(priceSale);
-        sale.setTotalPrice(sale.getPrice().subtract(descountAllProduct).subtract(discountProductSale));
+        sale.setTotalPrice(sale.getPrice().subtract(sale.getDiscount()));
 
         service.update(sale);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void validateStockStoreWhenUpdateSale(List<SaleDetail> saleDetails, Optional<List<SaleDetail>> saleDetailsFromDB) {
-
-        if(!saleDetailsFromDB.isPresent()) {
-
-        }
-
-
-
-    }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable int id) {
+    public ResponseEntity<HttpStatus> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
+
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private void saveAndUpdateSalaDetails(List<SaleDetail> saleDetail, Sale saleSaved, BigDecimal priceSale, BigDecimal discountProductSale, BigDecimal descountAllProduct) {
+    private void saveAndUpdateSalaDetails(List<SaleDetail> saleDetail, Sale saleSaved, BigDecimal priceSale, BigDecimal discountProductSale) {
 
         for (SaleDetail detail : saleDetail) {
-
-            descountAllProduct = detail.getSale().getDiscount();
 
             int idProduct = detail.getProduct().getId();
             int idStore = detail.getSale().getStore().getId();
@@ -160,27 +245,26 @@ public class SaleController {
             storeStockService.update(builStock(storeStockOpt, 0, detail));
 
         }
-
     }
+
     private void validateStockStore(List<SaleDetail> saleDetail) throws IllegalArgumentException {
         for (SaleDetail detail : saleDetail) {
-            
+
             int idProduct = detail.getProduct().getId();
             int idStore = detail.getSale().getStore().getId();
-            
+
             Optional<StoreStock> storeStockOpt = storeStockService.findByProductIdAndStoreId(idProduct, idStore);
-            
+
             if (!storeStockOpt.isPresent()) {
-                
+
                 throw new IllegalArgumentException("El producto " + detail.getProduct().getName() + " no esxite en stock de la tienda");
             }
-            
-            if (storeStockOpt.get().getQuantity() <= detail.getQuantity()) {
-                
+
+            if (detail.getQuantity() > storeStockOpt.get().getQuantity()) {
+
                 throw new IllegalArgumentException("El stock del producto " + detail.getProduct().getName() + " es menor al pedido del cliente");
-                
+
             }
-            
         }
     }
 
@@ -188,7 +272,20 @@ public class SaleController {
 
         StoreStock storeStockDB = storeStockOptFronDB.get();
 
-        int newQuantity = storeStockDB.getQuantity() - saleDetail.getQuantity();
+        //for create new sale
+        if (quantityVentaFromDB == 0){
+            int newQuantity = storeStockDB.getQuantity() - saleDetail.getQuantity();
+
+            return StoreStock.builder()
+                    .id(storeStockDB.getId())
+                    .product(storeStockDB.getProduct())
+                    .store(storeStockDB.getStore())
+                    .quantity(newQuantity)
+                    .build();
+        }
+
+        //for update sale
+        int newQuantity = (storeStockDB.getQuantity() +  quantityVentaFromDB)- saleDetail.getQuantity();
 
         return StoreStock.builder()
                 .id(storeStockDB.getId())
@@ -196,6 +293,6 @@ public class SaleController {
                 .store(storeStockDB.getStore())
                 .quantity(newQuantity)
                 .build();
-    }
 
+        }
 }

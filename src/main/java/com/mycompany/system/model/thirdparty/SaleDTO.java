@@ -68,6 +68,10 @@ public class SaleDTO implements Serializable {
     @JsonProperty("totalPrice")
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal("0.00");
+
+    @JsonProperty("cancelSale")
+    @Column(name = "cancel_sale")
+    private int cancelSale = 0;
     
     //@JsonProperty("saleDetail")
     //@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)

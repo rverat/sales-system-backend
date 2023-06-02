@@ -6,6 +6,7 @@ package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.UserSystem;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -14,6 +15,8 @@ import java.util.List;
 public interface UserService {
 
     List<UserSystem> getAll();
+
+    Optional<UserSystem> findByUserName(String userName);
 
     void save(UserSystem user);
 
