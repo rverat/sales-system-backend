@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,14 +70,52 @@ public class SaleController {
         //inserta la venta y retorna la venta unsertada
         Sale saleSaved = service.saveAndReturnData(saleDetail.get(0).getSale());
 
+
+        for (SaleDetail detail : saleDetail) {
+
+            int idProduct = detail.getProduct().getId();
+            int idStore = detail.getSale().getStore().getId();
+
+            Optional<StoreStock> storeStockOpt = storeStockService.findByProductIdAndStoreId(idProduct, idStore);
+            Optional<Product> optional = productService.findById(detail.getProduct().getId());
+
+            if (!storeStockOpt.isPresent()) {
+                throw new IllegalArgumentException("El producto " + detail.getProduct().getName() + " no esxite en stock de la tienda");
+            }
+
+            if (storeStockOpt.get().getQuantity() <= detail.getQuantity()) {
+                throw new IllegalArgumentException("El stock del producto " + detail.getProduct().getName() + " es menor al pedido del cliente");
+
+            }
+
+            detail.setSale(saleSaved);
+            detail.setUnitPrice(optional.get().getPrice());
+
+            BigDecimal discount = detail.getDiscount();
+            discount = (discount == null || discount == BigDecimal.ZERO) ? BigDecimal.ZERO : detail.getDiscount();
+
+            BigDecimal allPriceProduct = optional.get().getPrice().multiply(BigDecimal.valueOf(detail.getQuantity()));
+
+            detail.setTotalPrice(allPriceProduct.subtract(discount));
+
+            saleDetailService.save(detail);
+            storeStockService.update(builStock(storeStockOpt, 0, detail));
+
+        }
+
         BigDecimal priceSale = new BigDecimal(BigInteger.ZERO);
         BigDecimal discountProductSale = new BigDecimal(BigInteger.ZERO);
 
-        this.saveAndUpdateSalaDetails(saleDetail, saleSaved, priceSale, discountProductSale);
+        Optional<List<SaleDetail>> saleDetailsFromDBAfterUpdate = saleDetailService.findBySaleId(saleSaved.getId());
 
-        saleSaved.setDiscount(discountProductSale.add(sale.getDiscount()));
+        for (SaleDetail saleDetailAfter : saleDetailsFromDBAfterUpdate.get()) {
+            priceSale.add(saleDetailAfter.getTotalPrice());
+            discountProductSale = discountProductSale.add(saleDetailAfter.getDiscount());
+        }
+
+        saleSaved.setDiscount(discountProductSale.add(saleSaved.getDiscount()));
         saleSaved.setPrice(priceSale);
-        saleSaved.setTotalPrice(saleSaved.getPrice().subtract(saleSaved.getDiscount()));
+        saleSaved.setTotalPrice(sale.getPrice().subtract(saleSaved.getDiscount()));
 
         service.update(saleSaved);
 
@@ -96,27 +133,30 @@ public class SaleController {
 
         Optional<List<SaleDetail>> saleDetailsFromDB = saleDetailService.findBySaleId(sale.getId());
 
-        //validate ids for sale details
-
-        //end validate ids for sale details
-
         //validate stock
         for (SaleDetail newSaleDetail : saleDetails) {
 
             if (newSaleDetail.getId() == 0) {
                 //call stock service
-                Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
-                if (!stockProduct.isPresent()) {
-                    //not product registry in stock
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                int idProduct = newSaleDetail.getProduct().getId();
+                int idStore = newSaleDetail.getSale().getStore().getId();
+
+                Optional<StoreStock> storeStockOpt = storeStockService.findByProductIdAndStoreId(idProduct, idStore);
+
+                if (!storeStockOpt.isPresent()) {
+                    throw new IllegalArgumentException("El producto " + newSaleDetail.getProduct().getName() + " no esxite en stock de la tienda");
                 }
-                if (newSaleDetail.getQuantity() > stockProduct.get().getQuantity()) {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+                if (storeStockOpt.get().getQuantity() <= newSaleDetail.getQuantity()) {
+                    throw new IllegalArgumentException("El stock del producto " + newSaleDetail.getProduct().getName() + " es menor al pedido del cliente");
+
                 }
+
+
             } else if (newSaleDetail.getId() != 0) {
 
                 //if (newSaleDetail.getCancelSaleDetail() == 1) only return product to stock
-                if (newSaleDetail.getCancelSaleDetail() == 0){
+                if (newSaleDetail.getCancelSaleDetail() == 0) {
                     Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
                     if (!stockProduct.isPresent()) {
                         //not product registry in stock
@@ -150,14 +190,38 @@ public class SaleController {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
 
-                saleDetailService.save(newSaleDetail);
-                storeStockService.update(builStock(stockProduct, 0, newSaleDetail));
+                int idProduct = newSaleDetail.getProduct().getId();
+                int idStore = newSaleDetail.getSale().getStore().getId();
 
+                Optional<StoreStock> storeStockOpt = storeStockService.findByProductIdAndStoreId(idProduct, idStore);
+                Optional<Product> optional = productService.findById(newSaleDetail.getProduct().getId());
+
+                if (!storeStockOpt.isPresent()) {
+                    throw new IllegalArgumentException("El producto " + newSaleDetail.getProduct().getName() + " no esxite en stock de la tienda");
+                }
+
+                if (storeStockOpt.get().getQuantity() <= newSaleDetail.getQuantity()) {
+                    throw new IllegalArgumentException("El stock del producto " + newSaleDetail.getProduct().getName() + " es menor al pedido del cliente");
+
+                }
+
+                newSaleDetail.setSale(sale);
+                newSaleDetail.setUnitPrice(optional.get().getPrice());
+
+                BigDecimal discount = newSaleDetail.getDiscount();
+                discount = (discount == null || discount == BigDecimal.ZERO) ? BigDecimal.ZERO : newSaleDetail.getDiscount();
+
+                BigDecimal allPriceProduct = optional.get().getPrice().multiply(BigDecimal.valueOf(newSaleDetail.getQuantity()));
+                newSaleDetail.setTotalPrice(allPriceProduct.subtract(discount));
+
+
+                saleDetailService.save(newSaleDetail);
+                storeStockService.update(builStock(storeStockOpt, 0, newSaleDetail));
 
             } else if (newSaleDetail.getId() != 0) {
 
                 //if (newSaleDetail.getCancelSaleDetail() == 1) only return product to stock
-                if (newSaleDetail.getCancelSaleDetail() == 0){
+                if (newSaleDetail.getCancelSaleDetail() == 0) {
                     Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
                     if (!stockProduct.isPresent()) {
                         //not product registry in stock
@@ -170,8 +234,66 @@ public class SaleController {
                             if (newSaleDetail.getQuantity() > quantityAll) {
                                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                             }
-                            saleDetailService.update(newSaleDetail);
+                            //update sale detail
+
+                            int idProduct = newSaleDetail.getProduct().getId();
+                            int idStore = newSaleDetail.getSale().getStore().getId();
+
+                            Optional<StoreStock> storeStockOpt = storeStockService.findByProductIdAndStoreId(idProduct, idStore);
+                            Optional<Product> optional = productService.findById(newSaleDetail.getProduct().getId());
+
+                            if (!storeStockOpt.isPresent()) {
+                                throw new IllegalArgumentException("El producto " + newSaleDetail.getProduct().getName() + " no esxite en stock de la tienda");
+                            }
+
+                            if ((storeStockOpt.get().getQuantity()+detailDB.getQuantity()) < newSaleDetail.getQuantity()) {
+                                throw new IllegalArgumentException("El stock del producto " + newSaleDetail.getProduct().getName() + " es menor al pedido del cliente");
+
+                            }
+
+                            SaleDetail saleDetail = newSaleDetail;
+
+                            newSaleDetail.setSale(sale);
+                            newSaleDetail.setUnitPrice(optional.get().getPrice());
+
+                            BigDecimal discount = newSaleDetail.getDiscount();
+                            discount = (discount == null || discount == BigDecimal.ZERO) ? BigDecimal.ZERO : newSaleDetail.getDiscount();
+
+                            BigDecimal allPriceProduct = optional.get().getPrice().multiply(BigDecimal.valueOf(newSaleDetail.getQuantity()));
+                            newSaleDetail.setTotalPrice(allPriceProduct.subtract(discount));
+
+                            saleDetailService.update(saleDetail);
                             storeStockService.update(builStock(stockProduct, detailDB.getQuantity(), newSaleDetail));
+                        }
+                    }
+                } else {
+
+
+                    Optional<SaleDetail> saleDetailFronDB = saleDetailService.findBySaleDetailId(newSaleDetail.getId());
+
+                    if (saleDetailFronDB.isPresent()) {
+
+                        if (saleDetailFronDB.get().getCancelSaleDetail() != 1) {
+
+                            Optional<StoreStock> stockProduct = storeStockService.findByProductIdAndStoreId(newSaleDetail.getProduct().getId(), newSaleDetail.getSale().getStore().getId());
+                            if (!stockProduct.isPresent()) {
+                                //not product registry in stock
+                                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                            }
+
+                            for (SaleDetail detailDB : saleDetailsFromDB.get()) {
+                                if (detailDB.getId() == newSaleDetail.getId()) {
+                                    SaleDetail saleDetail = newSaleDetail;
+
+                                    saleDetail.setDiscount(BigDecimal.ZERO);
+                                    saleDetail.setUnitPrice(BigDecimal.ZERO);
+                                    saleDetail.setTotalPrice(BigDecimal.ZERO);
+                                    saleDetail.setCancelSaleDetail(1);
+
+                                    saleDetailService.update(saleDetail);
+                                    storeStockService.update(builStock(stockProduct, detailDB.getQuantity(), saleDetail));
+                                }
+                            }
                         }
                     }
                 }
@@ -184,7 +306,7 @@ public class SaleController {
 
         Optional<List<SaleDetail>> saleDetailsFromDBAfterUpdate = saleDetailService.findBySaleId(sale.getId());
 
-        for (SaleDetail saleDetailAfter : saleDetailsFromDBAfterUpdate.get()){
+        for (SaleDetail saleDetailAfter : saleDetailsFromDBAfterUpdate.get()) {
             priceSale.add(saleDetailAfter.getTotalPrice());
             discountProductSale = discountProductSale.add(saleDetailAfter.getDiscount());
         }
@@ -196,6 +318,48 @@ public class SaleController {
         service.update(sale);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> cancelSale(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int id) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
+
+        Optional<List<SaleDetail>> saleDetails = saleDetailService.findBySaleId(id);
+
+        Optional<Sale> saleFromDB = service.findById(id);
+        if (saleFromDB.isPresent()) {
+            Sale sale = saleFromDB.get();
+
+
+            for (SaleDetail saleDetail : saleDetails.get()) {
+
+                if (saleDetail.getCancelSaleDetail() == 0) {
+                    int quantity = saleDetail.getQuantity();
+                    saleDetail.setQuantity(0);
+                    saleDetail.setDiscount(BigDecimal.ZERO);
+                    saleDetail.setUnitPrice(BigDecimal.ZERO);
+                    saleDetail.setTotalPrice(BigDecimal.ZERO);
+                    saleDetail.setCancelSaleDetail(1);
+
+                    Optional<StoreStock> storeStockFromDB = storeStockService.findByProductIdAndStoreId(saleDetail.getProduct().getId(), sale.getStore().getId());
+                    StoreStock storeStock = storeStockFromDB.get();
+                    storeStock.setQuantity(storeStock.getQuantity() + quantity);
+                    saleDetailService.update(saleDetail);
+                    storeStockService.update(storeStock);
+                }
+            }
+            sale.setCancelSale(1);
+            sale.setDiscount(BigDecimal.ZERO);
+            sale.setPrice(BigDecimal.ZERO);
+            sale.setTotalPrice(BigDecimal.ZERO);
+            service.update(sale);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{id}")
@@ -273,7 +437,7 @@ public class SaleController {
         StoreStock storeStockDB = storeStockOptFronDB.get();
 
         //for create new sale
-        if (quantityVentaFromDB == 0){
+        if (quantityVentaFromDB == 0) {
             int newQuantity = storeStockDB.getQuantity() - saleDetail.getQuantity();
 
             return StoreStock.builder()
@@ -285,7 +449,7 @@ public class SaleController {
         }
 
         //for update sale
-        int newQuantity = (storeStockDB.getQuantity() +  quantityVentaFromDB)- saleDetail.getQuantity();
+        int newQuantity = (storeStockDB.getQuantity() + quantityVentaFromDB) - saleDetail.getQuantity();
 
         return StoreStock.builder()
                 .id(storeStockDB.getId())
@@ -294,5 +458,5 @@ public class SaleController {
                 .quantity(newQuantity)
                 .build();
 
-        }
+    }
 }

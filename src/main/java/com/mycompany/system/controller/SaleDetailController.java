@@ -55,6 +55,22 @@ public class SaleDetailController {
 
     }
 
+    @GetMapping(path = "/{saleDetailId}", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<SaleDetail> getSaleDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int saleDetailId) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
+
+        Optional<SaleDetail> saleDetail = service.findBySaleDetailId(saleDetailId);
+
+        if (!saleDetail.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(saleDetail.get(), HttpStatus.OK);
+
+    }
+
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody SaleDetail saleDetail) throws ParseException, JOSEException {
 

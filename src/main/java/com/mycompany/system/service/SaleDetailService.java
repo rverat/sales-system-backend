@@ -26,4 +26,5 @@ public interface SaleDetailService {
 
     void delete(int saleDetailId);
 
+    Optional<SaleDetail> findBySaleDetailId(int saleDetailId);
 }

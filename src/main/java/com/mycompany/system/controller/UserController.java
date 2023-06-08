@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,12 +39,26 @@ public class UserController {
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<UserSystem>> getAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws ParseException, JOSEException {
+    public ResponseEntity<List<UserSystem>> findAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws ParseException, JOSEException {
 
         ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
         if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
 
-        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+        String userName = JwtTokenUtil.getUsernameFromToken(token);
+        Optional<UserSystem> userSystem = service.findByUserName(userName);
+
+        if (!userSystem.isPresent()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if(userSystem.get().getTypeUser().equals("admin")){
+            return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+        }else {
+            List<UserSystem> userSystems = new ArrayList<>();
+            userSystems.add(userSystem.get());
+            return new ResponseEntity<>(userSystems, HttpStatus.OK);
+        }
+
     }
 
     @PostMapping(path = "/login", produces = {MediaType.APPLICATION_JSON_VALUE,
@@ -66,6 +81,7 @@ public class UserController {
                     return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                 }
                 String token = JwtTokenUtil.generateToken(userSystemRs.getUserName());
+                System.out.println(token);
                 userSystemRs.setToken(token);
                 return new ResponseEntity<>(userSystemRs, HttpStatus.OK);
             } catch (NoSuchAlgorithmException e) {

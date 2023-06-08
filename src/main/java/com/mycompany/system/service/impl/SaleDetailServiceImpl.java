@@ -64,5 +64,14 @@ public class SaleDetailServiceImpl implements SaleDetailService {
         dao.deleteById(saleDetailId);
     }
 
-   
+    @Override
+    public Optional<SaleDetail> findBySaleDetailId(int saleDetailId) {
+        Optional<SaleDetailDTO> optional= dao.findById(saleDetailId);
+
+        if(optional.isEmpty()){
+            return Optional.empty();
+        }
+        return Optional.of(mapper.saleDetailDTOToSaleDetail(optional.get()));
+    }
+
 }
