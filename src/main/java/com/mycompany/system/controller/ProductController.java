@@ -41,6 +41,16 @@ public class ProductController {
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/{productId}", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<Product> findById(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int productId) throws ParseException, JOSEException {
+
+        ResponseEntity HTTP_EXCEPTION = JwtTokenUtil.validateToken(token);
+        if (HTTP_EXCEPTION != null) return HTTP_EXCEPTION;
+
+        return new ResponseEntity<>(service.findById(productId).get(), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody Product product) throws ParseException, JOSEException {
 

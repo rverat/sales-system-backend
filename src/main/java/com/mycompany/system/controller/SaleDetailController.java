@@ -55,7 +55,7 @@ public class SaleDetailController {
 
     }
 
-    @GetMapping(path = "/{saleDetailId}", produces = {MediaType.APPLICATION_JSON_VALUE,
+    @GetMapping(path = "/detail/{saleDetailId}", produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<SaleDetail> getSaleDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable int saleDetailId) throws ParseException, JOSEException {
 

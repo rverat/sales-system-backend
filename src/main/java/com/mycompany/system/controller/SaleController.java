@@ -108,14 +108,15 @@ public class SaleController {
 
         Optional<List<SaleDetail>> saleDetailsFromDBAfterUpdate = saleDetailService.findBySaleId(saleSaved.getId());
 
-        for (SaleDetail saleDetailAfter : saleDetailsFromDBAfterUpdate.get()) {
-            priceSale.add(saleDetailAfter.getTotalPrice());
+        List<SaleDetail> saleDetailsFromDB = saleDetailsFromDBAfterUpdate.get();
+        for (SaleDetail saleDetailAfter : saleDetailsFromDB) {
+            priceSale = priceSale.add(saleDetailAfter.getTotalPrice());
             discountProductSale = discountProductSale.add(saleDetailAfter.getDiscount());
         }
 
         saleSaved.setDiscount(discountProductSale.add(saleSaved.getDiscount()));
         saleSaved.setPrice(priceSale);
-        saleSaved.setTotalPrice(sale.getPrice().subtract(saleSaved.getDiscount()));
+        saleSaved.setTotalPrice(saleSaved.getPrice().subtract(saleSaved.getDiscount()));
 
         service.update(saleSaved);
 
@@ -207,6 +208,7 @@ public class SaleController {
 
                 newSaleDetail.setSale(sale);
                 newSaleDetail.setUnitPrice(optional.get().getPrice());
+                newSaleDetail.setCancelSaleDetail(0);
 
                 BigDecimal discount = newSaleDetail.getDiscount();
                 discount = (discount == null || discount == BigDecimal.ZERO) ? BigDecimal.ZERO : newSaleDetail.getDiscount();
@@ -307,7 +309,7 @@ public class SaleController {
         Optional<List<SaleDetail>> saleDetailsFromDBAfterUpdate = saleDetailService.findBySaleId(sale.getId());
 
         for (SaleDetail saleDetailAfter : saleDetailsFromDBAfterUpdate.get()) {
-            priceSale.add(saleDetailAfter.getTotalPrice());
+            priceSale = priceSale.add(saleDetailAfter.getTotalPrice());
             discountProductSale = discountProductSale.add(saleDetailAfter.getDiscount());
         }
 
