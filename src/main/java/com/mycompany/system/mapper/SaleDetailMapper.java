@@ -6,11 +6,11 @@ package com.mycompany.system.mapper;
 
 import com.mycompany.system.model.business.SaleDetail;
 import com.mycompany.system.model.thirdparty.SaleDetailDTO;
-import java.util.List;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 /**
- *
  * @author ro
  */
 @Mapper(componentModel = "spring")
@@ -21,7 +21,7 @@ public interface SaleDetailMapper {
     List<SaleDetail> saleDetailDTOListToSaleDetailList(List<SaleDetailDTO> saleDetailDTOs);
 
     SaleDetailDTO saleDetailToSaleDetailDTO(SaleDetail saleDetail);
-    
+
     List<SaleDetailDTO> saleDetailListToSaleDetailDTOList(List<SaleDetail> saleDetails);
 
 }

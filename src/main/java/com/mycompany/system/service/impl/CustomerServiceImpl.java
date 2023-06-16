@@ -8,12 +8,12 @@ import com.mycompany.system.dao.CustomerDAO;
 import com.mycompany.system.mapper.CustomerMapper;
 import com.mycompany.system.model.business.Customer;
 import com.mycompany.system.service.CustomerService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- *
  * @author ro
  */
 @Service

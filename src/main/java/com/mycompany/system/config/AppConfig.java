@@ -8,11 +8,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
  * @author ro
  */
 @Configuration
 @ComponentScan("com.mycompany.system")
 public class AppConfig {
-    
+
 }

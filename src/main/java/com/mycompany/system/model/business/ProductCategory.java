@@ -5,15 +5,11 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
- *
  * @author ro
  */
 
@@ -22,14 +18,14 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCategory implements Serializable{
-    
+public class ProductCategory implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @JsonProperty("id")
     private int id;
-    
+
     @JsonProperty("name")
     private String name;
-    
+
 }

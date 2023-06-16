@@ -248,7 +248,7 @@ public class SaleController {
                                 throw new IllegalArgumentException("El producto " + newSaleDetail.getProduct().getName() + " no esxite en stock de la tienda");
                             }
 
-                            if ((storeStockOpt.get().getQuantity()+detailDB.getQuantity()) < newSaleDetail.getQuantity()) {
+                            if ((storeStockOpt.get().getQuantity() + detailDB.getQuantity()) < newSaleDetail.getQuantity()) {
                                 throw new IllegalArgumentException("El stock del producto " + newSaleDetail.getProduct().getName() + " es menor al pedido del cliente");
 
                             }

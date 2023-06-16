@@ -5,17 +5,17 @@
 package com.mycompany.system.dao;
 
 import com.mycompany.system.model.thirdparty.ProductOutStoreDTO;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
- *
  * @author ro
  */
 @Repository
-public interface ProductOutStoreDAO extends JpaRepository<ProductOutStoreDTO, Integer>{
-    
-    public Optional<ProductOutStoreDTO> findById(int id);
-    
+public interface ProductOutStoreDAO extends JpaRepository<ProductOutStoreDTO, Integer> {
+
+    Optional<ProductOutStoreDTO> findById(int id);
+
 }

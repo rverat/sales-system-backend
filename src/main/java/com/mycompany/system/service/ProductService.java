@@ -5,17 +5,17 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Product;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 public interface ProductService {
 
     List<Product> getAll();
-    
+
     Optional<Product> findById(int id);
 
     void save(Product product);

@@ -4,16 +4,16 @@
  */
 package com.mycompany.system.service.impl;
 
-import com.mycompany.system.model.business.ProductCategory;
-import com.mycompany.system.service.ProductCategoryService;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.mycompany.system.dao.ProductCategoryDAO;
 import com.mycompany.system.mapper.ProductCategoryMapper;
+import com.mycompany.system.model.business.ProductCategory;
+import com.mycompany.system.service.ProductCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
- *
  * @author ro
  */
 @Service

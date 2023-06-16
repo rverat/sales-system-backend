@@ -4,7 +4,6 @@
  */
 package com.mycompany.system.dao;
 
-import com.mycompany.system.model.thirdparty.ProductEntryWarehouseDTO;
 import com.mycompany.system.model.thirdparty.UserSystemDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,12 +11,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 @Repository
-public interface UserSystemDAO extends JpaRepository<UserSystemDTO, Integer>{
+public interface UserSystemDAO extends JpaRepository<UserSystemDTO, Integer> {
 
-    public Optional<UserSystemDTO> findByUserName(String userName);
- 
+    Optional<UserSystemDTO> findByUserName(String userName);
+
 }

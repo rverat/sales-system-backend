@@ -5,17 +5,15 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
- *
  * @author ro
  */
 @Getter

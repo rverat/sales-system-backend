@@ -5,18 +5,18 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.ProductOutStore;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 public interface ProductOutStoreService {
 
     List<ProductOutStore> getAll();
-    
-    public Optional<ProductOutStore> findById(int id);
+
+    Optional<ProductOutStore> findById(int id);
 
     void save(ProductOutStore out);
 

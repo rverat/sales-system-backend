@@ -5,10 +5,10 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Supplier;
+
 import java.util.List;
 
 /**
- *
  * @author ro
  */
 public interface SupplierService {

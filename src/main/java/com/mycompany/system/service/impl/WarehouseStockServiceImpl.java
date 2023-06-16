@@ -9,13 +9,13 @@ import com.mycompany.system.mapper.WarehouseStockMapper;
 import com.mycompany.system.model.business.WarehouseStock;
 import com.mycompany.system.model.thirdparty.WarehouseStockDTO;
 import com.mycompany.system.service.WarehouseStockService;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
- *
  * @author ro
  */
 @Service
@@ -31,17 +31,17 @@ public class WarehouseStockServiceImpl implements WarehouseStockService {
     public List<WarehouseStock> getAll() {
         return mapper.warehouseStockDTOListToWarehouseStockList(dao.findAll());
     }
-    
+
     @Override
     public Optional<WarehouseStock> findByProductId(int productId) {
-        
-        Optional<WarehouseStockDTO> optional = dao.findByProductId(productId);   
-        
-        if(optional.isPresent()){
-            WarehouseStockDTO  warehouseStockDTO = optional.get();          
-           return Optional.of(mapper.warehouseStockDTOToWarehouseStock(warehouseStockDTO));       
+
+        Optional<WarehouseStockDTO> optional = dao.findByProductId(productId);
+
+        if (optional.isPresent()) {
+            WarehouseStockDTO warehouseStockDTO = optional.get();
+            return Optional.of(mapper.warehouseStockDTOToWarehouseStock(warehouseStockDTO));
         }
-      return  Optional.empty();
+        return Optional.empty();
     }
 
     @Override

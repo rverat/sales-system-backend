@@ -9,11 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- *
  * @author ro
  */
 @Repository
-public interface CustomerDAO extends JpaRepository<CustomerDTO, Integer>{
-    
+public interface CustomerDAO extends JpaRepository<CustomerDTO, Integer> {
+
 }
 

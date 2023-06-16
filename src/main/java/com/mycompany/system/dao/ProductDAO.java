@@ -9,10 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- *
  * @author ro
  */
 @Repository
-public interface ProductDAO extends JpaRepository<ProductDTO, Integer>{
-    
+public interface ProductDAO extends JpaRepository<ProductDTO, Integer> {
+
 }

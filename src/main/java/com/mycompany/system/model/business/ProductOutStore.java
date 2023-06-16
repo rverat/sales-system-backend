@@ -5,16 +5,12 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
- *
  * @author ro
  */
 @Builder
@@ -40,7 +36,7 @@ public class ProductOutStore implements Serializable {
 
     @JsonProperty("date")
     private LocalDate date;
-    
+
     @JsonProperty("ticket_Cancelled")
     private boolean ticketCancelled;
 

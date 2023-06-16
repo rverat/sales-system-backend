@@ -8,17 +8,15 @@ import com.mycompany.system.dao.SaleDAO;
 import com.mycompany.system.mapper.SaleMapper;
 import com.mycompany.system.model.business.Sale;
 import com.mycompany.system.model.thirdparty.SaleDTO;
-import com.mycompany.system.model.thirdparty.SaleDetailDTO;
 import com.mycompany.system.service.SaleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 /**
- *
  * @author ro
  */
 @Service
@@ -52,18 +50,18 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public Sale saveAndReturnData(Sale sale) {
-        
+
         sale.setDate(LocalDate.now());
-        
+
         SaleDTO saleDTO = saleDAO.save(saleMapper.saleToSaleDTO(sale));
         return saleMapper.saleDTOToSale(saleDTO);
     }
 
     @Override
     public Optional<Sale> findById(int id) {
-        Optional<SaleDTO> optional= saleDAO.findById(id);
+        Optional<SaleDTO> optional = saleDAO.findById(id);
 
-        if(optional.isEmpty()){
+        if (optional.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(saleMapper.saleDTOToSale(optional.get()));

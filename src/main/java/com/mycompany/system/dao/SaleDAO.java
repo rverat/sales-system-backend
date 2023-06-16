@@ -9,11 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- *
  * @author ro
  */
 @Repository
-public interface SaleDAO extends JpaRepository<SaleDTO, Integer>{
-    
+public interface SaleDAO extends JpaRepository<SaleDTO, Integer> {
+
 }
 

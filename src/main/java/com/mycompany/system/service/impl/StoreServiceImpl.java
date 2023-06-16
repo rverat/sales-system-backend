@@ -4,16 +4,16 @@
  */
 package com.mycompany.system.service.impl;
 
-import com.mycompany.system.service.StoreService;
 import com.mycompany.system.dao.StoreDAO;
 import com.mycompany.system.mapper.StoreMapper;
 import com.mycompany.system.model.business.Store;
-import java.util.List;
+import com.mycompany.system.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- *
  * @author ro
  */
 @Service

@@ -5,17 +5,17 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.WarehouseStock;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 public interface WarehouseStockService {
 
     List<WarehouseStock> getAll();
-    
+
     Optional<WarehouseStock> findByProductId(int productId);
 
     void save(WarehouseStock stock);

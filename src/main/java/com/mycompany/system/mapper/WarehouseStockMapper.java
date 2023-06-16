@@ -6,11 +6,11 @@ package com.mycompany.system.mapper;
 
 import com.mycompany.system.model.business.WarehouseStock;
 import com.mycompany.system.model.thirdparty.WarehouseStockDTO;
-import java.util.List;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 /**
- *
  * @author ro
  */
 @Mapper(componentModel = "spring")

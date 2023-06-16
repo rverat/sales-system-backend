@@ -4,16 +4,16 @@
  */
 package com.mycompany.system.service.impl;
 
-import com.mycompany.system.service.SupplierService;
 import com.mycompany.system.dao.SupplierDAO;
 import com.mycompany.system.mapper.SupplierMapper;
 import com.mycompany.system.model.business.Supplier;
-import java.util.List;
+import com.mycompany.system.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- *
  * @author ro
  */
 @Service

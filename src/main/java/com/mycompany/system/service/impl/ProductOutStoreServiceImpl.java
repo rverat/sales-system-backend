@@ -4,18 +4,18 @@
  */
 package com.mycompany.system.service.impl;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.mycompany.system.dao.ProductOutStoreDAO;
 import com.mycompany.system.mapper.ProductOutStoreMapper;
 import com.mycompany.system.model.business.ProductOutStore;
 import com.mycompany.system.model.thirdparty.ProductOutStoreDTO;
 import com.mycompany.system.service.ProductOutStoreService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 @Service
@@ -31,15 +31,15 @@ public class ProductOutStoreServiceImpl implements ProductOutStoreService {
     public List<ProductOutStore> getAll() {
         return mapper.productOutStoreDTOListToProductOutStoreList(dao.findAll());
     }
-    
-     @Override
+
+    @Override
     public Optional<ProductOutStore> findById(int id) {
-         Optional<ProductOutStoreDTO> optional = dao.findById(id);   
-        if(optional.isPresent()){
-            ProductOutStoreDTO  entryWarehouseDTO = optional.get();          
-           return Optional.of(mapper.productOutStoreDTOToProductOutStore(entryWarehouseDTO));       
+        Optional<ProductOutStoreDTO> optional = dao.findById(id);
+        if (optional.isPresent()) {
+            ProductOutStoreDTO entryWarehouseDTO = optional.get();
+            return Optional.of(mapper.productOutStoreDTOToProductOutStore(entryWarehouseDTO));
         }
-      return  Optional.empty();
+        return Optional.empty();
     }
 
     @Override
@@ -57,5 +57,5 @@ public class ProductOutStoreServiceImpl implements ProductOutStoreService {
         dao.deleteById(productOutStoreId);
     }
 
-   
+
 }

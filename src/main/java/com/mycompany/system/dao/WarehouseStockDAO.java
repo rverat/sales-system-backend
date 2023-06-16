@@ -5,18 +5,18 @@
 package com.mycompany.system.dao;
 
 import com.mycompany.system.model.thirdparty.WarehouseStockDTO;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
- *
  * @author ro
  */
 @Repository
-public interface WarehouseStockDAO extends JpaRepository<WarehouseStockDTO, Integer>{
+public interface WarehouseStockDAO extends JpaRepository<WarehouseStockDTO, Integer> {
 
-    public Optional<WarehouseStockDTO> findByProductId(int productId);
-    
+    Optional<WarehouseStockDTO> findByProductId(int productId);
+
 }
 

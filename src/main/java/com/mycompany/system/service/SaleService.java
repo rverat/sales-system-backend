@@ -5,11 +5,11 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.Sale;
+
 import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 public interface SaleService {
@@ -22,7 +22,7 @@ public interface SaleService {
 
     void delete(int saleId);
 
-    public Sale saveAndReturnData(Sale sale);
+    Sale saveAndReturnData(Sale sale);
 
     Optional<Sale> findById(int id);
 }

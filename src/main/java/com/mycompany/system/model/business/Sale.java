@@ -5,19 +5,16 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
- *
  * @author ro
  */
 @Getter
@@ -30,13 +27,13 @@ public class Sale implements Serializable {
 
     @JsonProperty("id")
     private int id;
-    
+
     @JsonProperty("userSystem")
     private UserSystem userSystem;
-    
+
     @JsonProperty("customer")
     private Customer customer;
-    
+
     @JsonProperty("store")
     private Store store;
 

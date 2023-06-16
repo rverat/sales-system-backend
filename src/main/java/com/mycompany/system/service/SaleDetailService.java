@@ -5,11 +5,13 @@
 package com.mycompany.system.service;
 
 import com.mycompany.system.model.business.SaleDetail;
+import com.mycompany.system.model.report.SaleReport;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 /**
- *
  * @author ro
  */
 public interface SaleDetailService {
@@ -19,7 +21,7 @@ public interface SaleDetailService {
     Optional<List<SaleDetail>> findBySaleId(int saleId);
 
     void save(SaleDetail saleDetail);
-    
+
     void saveAll(List<SaleDetail> saleDetails);
 
     void update(SaleDetail saleDetail);
@@ -27,4 +29,8 @@ public interface SaleDetailService {
     void delete(int saleDetailId);
 
     Optional<SaleDetail> findBySaleDetailId(int saleDetailId);
+
+    Optional<List<SaleReport>> getSaleReports();
+
+    Optional<List<SaleReport>> getSaleReportsByDate(LocalDate startDate, LocalDate endDate);
 }

@@ -47,13 +47,13 @@ public class UserController {
         String userName = JwtTokenUtil.getUsernameFromToken(token);
         Optional<UserSystem> userSystem = service.findByUserName(userName);
 
-        if (!userSystem.isPresent()){
+        if (!userSystem.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if(userSystem.get().getTypeUser().equals("admin")){
+        if (userSystem.get().getTypeUser().equals("admin")) {
             return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
-        }else {
+        } else {
             List<UserSystem> userSystems = new ArrayList<>();
             userSystems.add(userSystem.get());
             return new ResponseEntity<>(userSystems, HttpStatus.OK);
@@ -81,7 +81,6 @@ public class UserController {
                     return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                 }
                 String token = JwtTokenUtil.generateToken(userSystemRs.getUserName());
-                System.out.println(token);
                 userSystemRs.setToken(token);
                 return new ResponseEntity<>(userSystemRs, HttpStatus.OK);
             } catch (NoSuchAlgorithmException e) {

@@ -5,15 +5,12 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
- *
  * @author ro
  */
 @Builder

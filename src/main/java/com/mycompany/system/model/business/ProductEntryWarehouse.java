@@ -5,16 +5,16 @@
 package com.mycompany.system.model.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 /**
- *
  * @author ro
  */
 @Getter
@@ -27,7 +27,7 @@ public class ProductEntryWarehouse implements Serializable {
 
     @JsonProperty("id")
     private int id;
-    
+
     @JsonProperty("userSystem")
     private UserSystem userSystem;
 
@@ -36,7 +36,7 @@ public class ProductEntryWarehouse implements Serializable {
 
     @JsonProperty("supplier")
     private Supplier supplier;
-    
+
     @JsonProperty("quantity")
     private int quantity;
 
@@ -54,5 +54,5 @@ public class ProductEntryWarehouse implements Serializable {
 
     @JsonProperty("ticketCancelled")
     private boolean ticketCancelled = false;
-    
+
 }

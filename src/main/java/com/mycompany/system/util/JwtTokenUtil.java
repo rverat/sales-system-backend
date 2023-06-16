@@ -1,7 +1,11 @@
 package com.mycompany.system.util;
 
-import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.http.HttpStatus;
@@ -58,11 +62,11 @@ public class JwtTokenUtil {
 
     public static ResponseEntity validateToken(String token) throws JOSEException, ParseException {
 
-        if(isTokenValid(token)){
+        if (isTokenValid(token)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        if(token == null || token.isEmpty()){
+        if (token == null || token.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
